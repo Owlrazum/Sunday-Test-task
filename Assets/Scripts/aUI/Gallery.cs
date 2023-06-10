@@ -24,6 +24,9 @@ public class Gallery : MonoBehaviour
     int _columnsCount = 2;
 
     [SerializeField]
+    int _imagesCount = 66;
+
+    [SerializeField]
     Material _loadingMaterial;
 
     [SerializeField]
@@ -73,16 +76,19 @@ public class Gallery : MonoBehaviour
 
     void OnScroll(Vector2 scroll)
     {
-        float targetHeight = _scrollRectHeight + scroll.y * _contentSize;
-        Debug.Log(targetHeight);
+        float targetHeight = _scrollRectHeight + (1 - scroll.y) * _contentSize;
         if (_loadedHeight > targetHeight)
         {
             return;
         }
 
         int imageId = _lastLoadedImageId;
+        if (imageId == 66)
+        {
+            return;
+        }
         int columnId = imageId % _columnsCount;
-        while (_loadedHeight <= _scrollRectHeight || columnId != 0)
+        while (_loadedHeight <= targetHeight || columnId != 0)
         {
             CreateImage(imageId, columnId);
             StartCoroutine(Web.Request(imageId, FillTexture));
