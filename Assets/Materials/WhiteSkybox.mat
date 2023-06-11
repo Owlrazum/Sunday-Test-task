@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Skybox
+  m_Name: WhiteSkybox
   m_Shader: {fileID: 4800000, guid: e05e43caa3ced43b9a8fc41e9e6a358b, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -122,9 +122,9 @@ Material:
     - _pwer: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Bottom: {r: 0.74509805, g: 0.74509805, b: 0.74509805, a: 0}
+    - _Bottom: {r: 0.94117653, g: 0.94117653, b: 0.94117653, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _Top: {r: 0.74509805, g: 0.74509805, b: 0.74509805, a: 0}
+    - _Top: {r: 0.94117653, g: 0.94117653, b: 0.94117653, a: 0}
   m_BuildTextureStacks: []

@@ -6,11 +6,23 @@ public class ScenesController : MonoBehaviour
 {
     AsyncOperation _loadingScene;
 
+    [SerializeField]
+    int _gallerySceneIndex = 2;
+
+    [SerializeField]
+    int _previewSceneIndex = 3;
+
+    bool isReturningToGallery;
+
+
     void Awake()
     {
         ApplicationDelegatesContainer.LoadGallery += LoadGallery;
+        ApplicationDelegatesContainer.LoadPreview += LoadPreview;
 
         UIDelegatesContainer.GetSceneLoadingProgress += UpdateSceneLoadingProgress;
+
+        ApplicationDelegatesContainer.OnGalleryReturnCommand += OnGalleryReturnCommand;
 
         DontDestroyOnLoad(gameObject);
     }
@@ -18,6 +30,7 @@ public class ScenesController : MonoBehaviour
     void OnDestroy()
     { 
         ApplicationDelegatesContainer.LoadGallery -= LoadGallery;
+        ApplicationDelegatesContainer.LoadPreview -= LoadPreview;
 
         UIDelegatesContainer.GetSceneLoadingProgress -= UpdateSceneLoadingProgress;
     }
@@ -25,14 +38,27 @@ public class ScenesController : MonoBehaviour
     void LoadGallery()
     {
         SceneManager.LoadScene(1);
-        StartCoroutine(DemonstrateLoadScreen());
+        StartCoroutine(DemonstrateLoadScreen(_gallerySceneIndex));
     }
 
-    IEnumerator DemonstrateLoadScreen()
+    void LoadPreview()
+    {
+        SceneManager.LoadScene(1);
+        StartCoroutine(DemonstrateLoadScreen(_previewSceneIndex));
+    }
+
+    IEnumerator DemonstrateLoadScreen(int sceneIndex)
     {
         yield return new WaitForSeconds(1);
-        _loadingScene = SceneManager.LoadSceneAsync(2);
+        _loadingScene = SceneManager.LoadSceneAsync(sceneIndex);
+        _loadingScene.allowSceneActivation = false;
+        yield return new WaitForSeconds(1);
         _loadingScene.allowSceneActivation = true;
+        if (isReturningToGallery)
+        {
+            ApplicationDelegatesContainer.OnReturnedToGallery();
+            isReturningToGallery = false;
+        }
     }
 
     float UpdateSceneLoadingProgress()
@@ -45,5 +71,10 @@ public class ScenesController : MonoBehaviour
         {
             return -1;
         }
+    }
+
+    void OnGalleryReturnCommand()
+    {
+        isReturningToGallery = true;
     }
 }

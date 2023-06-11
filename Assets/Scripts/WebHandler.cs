@@ -4,9 +4,26 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public static class Web
+public class WebHandler : MonoBehaviour
 {
     const string serverUrl = "http://data.ikppbb.com/test-task-unity-data/pics/";
+
+    void Awake()
+    {
+        DontDestroyOnLoad(this);
+
+        ApplicationDelegatesContainer.GetWebHandler += GetWebHandler;
+    }
+
+    WebHandler GetWebHandler()
+    {
+        return this;
+    }
+
+    public void StartRequest(int imageNumber, Action<Texture2D, int> textureToFill)
+    {
+        StartCoroutine(Request(imageNumber, textureToFill));
+    }
 
     public static IEnumerator Request(int imageNumber, Action<Texture2D, int> textureToFill)
     {

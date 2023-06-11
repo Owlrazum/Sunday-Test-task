@@ -44,8 +44,19 @@ public class Gallery : MonoBehaviour
     int _lastLoadedImageId;
     float _loadedHeight;
 
+    int _columnToPreviewId;
+    int _imageToPreviewId;
+
+    WebHandler _webHandler;
+
     void Awake()
     {
+        if (ApplicationDelegatesContainer.GetImageToPreview != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        
         int count = _columnSize * _columnsCount;
         _requestedImages = new(count);
         _imagesByColumn = new List<List<Image>>(_columnsCount);
@@ -61,17 +72,41 @@ public class Gallery : MonoBehaviour
 
         _scrollRect.onValueChanged.AddListener(OnScroll);
 
+        _webHandler = ApplicationDelegatesContainer.GetWebHandler();
+
         int imageId = 0;
         int columnId = imageId % _columnsCount;
         while (_loadedHeight <= _scrollRectHeight || columnId != 0)
         {
             CreateImage(imageId, columnId);
-            StartCoroutine(Web.Request(imageId, FillTexture));
+            _webHandler.StartRequest(imageId, FillTexture);
             // _requestedImages.Add(imageId);
             imageId++;
             columnId = imageId % _columnsCount;
         }
         _lastLoadedImageId = imageId;
+
+        DontDestroyOnLoad(gameObject);
+
+        ApplicationDelegatesContainer.GetImageToPreview += GetImageToPreview;
+        ApplicationDelegatesContainer.OnReturnedToGallery += OnReturnedToGallery;
+    }
+
+    void OnDestroy()
+    {
+        ApplicationDelegatesContainer.GetImageToPreview -= GetImageToPreview;
+        ApplicationDelegatesContainer.OnReturnedToGallery -= OnReturnedToGallery;
+    }
+
+    Image GetImageToPreview()
+    {
+        Debug.Log(_columnToPreviewId + " " + _imageToPreviewId);
+        return _imagesByColumn[_columnToPreviewId][_imageToPreviewId];
+    }
+
+    void OnReturnedToGallery()
+    {
+        gameObject.SetActive(true);
     }
 
     void OnScroll(Vector2 scroll)
@@ -83,7 +118,7 @@ public class Gallery : MonoBehaviour
         }
 
         int imageId = _lastLoadedImageId;
-        if (imageId == 66)
+        if (imageId == _imagesCount)
         {
             return;
         }
@@ -91,7 +126,7 @@ public class Gallery : MonoBehaviour
         while (_loadedHeight <= targetHeight || columnId != 0)
         {
             CreateImage(imageId, columnId);
-            StartCoroutine(Web.Request(imageId, FillTexture));
+            _webHandler.StartRequest(imageId, FillTexture);
             imageId++;
             columnId = imageId % _columnsCount;
         }
@@ -113,17 +148,25 @@ public class Gallery : MonoBehaviour
 
         float posY = -_columnsGap;
         if (column.Count != 0)
-        { 
+        {
             RectTransform prevRect = column[column.Count - 1].rectTransform;
             posY = prevRect.anchoredPosition.y - prevRect.sizeDelta.y - _columnsGap;
         }
         rect.anchoredPosition = new Vector2(
             _leftRightPos.x + columnId * (_columnWidth + _columnsGap)
-            , posY); 
+            , posY);
         rect.sizeDelta = new Vector2Int(_columnWidth, _columnWidth);
 
         _loadedHeight = Mathf.Max(Mathf.Abs(rect.anchoredPosition.y) + rect.sizeDelta.y + _columnsGap, _loadedHeight);
         column.Add(image);
+    }
+
+    void OnChooseImage(int imageId)
+    {
+        gameObject.SetActive(false);
+        _imageToPreviewId = imageId / _columnsCount;
+        _columnToPreviewId = imageId % _columnsCount;
+        ApplicationDelegatesContainer.LoadPreview();
     }
 
     void FillTexture(Texture2D texture, int imageId)
@@ -138,6 +181,9 @@ public class Gallery : MonoBehaviour
 
         RectTransform rect = image.rectTransform;
         Vector2 sizeDelta = rect.sizeDelta;
+
+        ImageButton imageButton = image.gameObject.AddComponent<ImageButton>();
+        imageButton.Initialize(OnChooseImage, imageId);
 
         // a partial solution to different aspect ratio, the logic of determining whether new image should be loaded is missing.
         // // In case the image's aspect ratio is not 1:1, change image's sizeDelta. 
