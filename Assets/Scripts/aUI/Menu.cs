@@ -9,6 +9,8 @@ public class Menu : MonoBehaviour
     {
         transform.GetChild(0).TryGetComponent(out _button);
         _button.onClick.AddListener(OnClick);
+
+        Screen.orientation = ScreenOrientation.Portrait;
     }
 
     private void OnDestroy()

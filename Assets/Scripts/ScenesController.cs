@@ -12,7 +12,8 @@ public class ScenesController : MonoBehaviour
     [SerializeField]
     int _previewSceneIndex = 3;
 
-    bool isReturningToGallery;
+    bool _isReturningToGallery;
+    float _progress;
 
 
     void Awake()
@@ -20,7 +21,7 @@ public class ScenesController : MonoBehaviour
         ApplicationDelegatesContainer.LoadGallery += LoadGallery;
         ApplicationDelegatesContainer.LoadPreview += LoadPreview;
 
-        UIDelegatesContainer.GetSceneLoadingProgress += UpdateSceneLoadingProgress;
+        UIDelegatesContainer.GetSceneLoadingProgress += GetSceneLoadingProgress;
 
         ApplicationDelegatesContainer.OnGalleryReturnCommand += OnGalleryReturnCommand;
 
@@ -32,7 +33,7 @@ public class ScenesController : MonoBehaviour
         ApplicationDelegatesContainer.LoadGallery -= LoadGallery;
         ApplicationDelegatesContainer.LoadPreview -= LoadPreview;
 
-        UIDelegatesContainer.GetSceneLoadingProgress -= UpdateSceneLoadingProgress;
+        UIDelegatesContainer.GetSceneLoadingProgress -= GetSceneLoadingProgress;
     }
 
     void LoadGallery()
@@ -54,14 +55,15 @@ public class ScenesController : MonoBehaviour
         _loadingScene.allowSceneActivation = false;
         yield return new WaitForSeconds(1);
         _loadingScene.allowSceneActivation = true;
-        if (isReturningToGallery)
+        if (_isReturningToGallery)
         {
             ApplicationDelegatesContainer.OnReturnedToGallery();
-            isReturningToGallery = false;
+            _isReturningToGallery = false;
         }
+        _loadingScene = null;
     }
 
-    float UpdateSceneLoadingProgress()
+    float GetSceneLoadingProgress()
     {
         if (_loadingScene != null)
         { 
@@ -75,6 +77,6 @@ public class ScenesController : MonoBehaviour
 
     void OnGalleryReturnCommand()
     {
-        isReturningToGallery = true;
+        _isReturningToGallery = true;
     }
 }

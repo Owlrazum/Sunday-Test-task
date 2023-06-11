@@ -92,6 +92,11 @@ public class Gallery : MonoBehaviour
         ApplicationDelegatesContainer.OnReturnedToGallery += OnReturnedToGallery;
     }
 
+    void OnEnable()
+    {
+        Screen.orientation = ScreenOrientation.Portrait;
+    }
+
     void OnDestroy()
     {
         ApplicationDelegatesContainer.GetImageToPreview -= GetImageToPreview;
@@ -100,7 +105,6 @@ public class Gallery : MonoBehaviour
 
     Image GetImageToPreview()
     {
-        Debug.Log(_columnToPreviewId + " " + _imageToPreviewId);
         return _imagesByColumn[_columnToPreviewId][_imageToPreviewId];
     }
 
