@@ -34,10 +34,13 @@ public class ScenesController : MonoBehaviour
         ApplicationDelegatesContainer.LoadPreview -= LoadPreview;
 
         UIDelegatesContainer.GetSceneLoadingProgress -= GetSceneLoadingProgress;
+
+        ApplicationDelegatesContainer.OnGalleryReturnCommand -= OnGalleryReturnCommand;
     }
 
     void LoadGallery()
     {
+        Screen.orientation = ScreenOrientation.Portrait;
         SceneManager.LoadScene(1);
         StartCoroutine(DemonstrateLoadScreen(_gallerySceneIndex));
     }

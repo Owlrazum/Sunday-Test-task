@@ -92,11 +92,6 @@ public class Gallery : MonoBehaviour
         ApplicationDelegatesContainer.OnReturnedToGallery += OnReturnedToGallery;
     }
 
-    void OnEnable()
-    {
-        Screen.orientation = ScreenOrientation.Portrait;
-    }
-
     void OnDestroy()
     {
         ApplicationDelegatesContainer.GetImageToPreview -= GetImageToPreview;

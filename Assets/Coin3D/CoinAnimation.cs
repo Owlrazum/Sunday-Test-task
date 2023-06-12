@@ -29,7 +29,11 @@ public class CoinAnimation : MonoBehaviour
 
     bool isShining = false;
     Vector2 startEnd = Vector2.zero;
-    float timeCounter = 0;
+    
+    float lastShineTime = 0;
+    float lastColorSwitchTime = 0;
+
+    const float COLOR_SWITCH_TIME = 0.5f;
 
     void Awake()
     {
@@ -43,11 +47,10 @@ public class CoinAnimation : MonoBehaviour
 
         if (!isShining) 
         {
-            timeCounter += Time.deltaTime;
-            if (timeCounter > shineTime)
+            if (Time.time - lastShineTime > shineTime)
             {
                 StartCoroutine(Shining());
-                timeCounter = 0;
+                lastShineTime = Time.time;
             }
         }
 
@@ -57,15 +60,20 @@ public class CoinAnimation : MonoBehaviour
             Ray screenRay = camera.ScreenPointToRay(Input.GetTouch(0).position);
             if (Physics.Raycast(screenRay))
             {
-                if (changedColor)
-                { 
-                    renderer.material.SetColor("_BaseColor", Color.white);
-                    changedColor = false;
-                }
-                else
+                if (Time.time - lastColorSwitchTime > COLOR_SWITCH_TIME)
                 {
-                    renderer.material.SetColor("_BaseColor", Color.yellow);
-                    changedColor = true;
+                    if (changedColor)
+                    { 
+                        renderer.material.SetColor("_BaseColor", Color.white);
+                        changedColor = false;
+                    }
+                    else
+                    {
+                        renderer.material.SetColor("_BaseColor", Color.red);
+                        changedColor = true;
+                    }
+
+                    lastColorSwitchTime = Time.time;
                 }
             }
         }
