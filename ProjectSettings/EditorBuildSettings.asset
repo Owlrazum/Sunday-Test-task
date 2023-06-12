@@ -6,15 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Menu.unity
+    path: Assets/Gallery/Scenes/Menu.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Scenes/LoadProgress.unity
+    path: Assets/Gallery/Scenes/LoadProgress.unity
     guid: 4b537a1b2a320427f906377205e17d82
   - enabled: 1
-    path: Assets/Scenes/Gallery.unity
+    path: Assets/Gallery/Scenes/Gallery.unity
     guid: a0529aefeb6a64816854d07021e3246d
   - enabled: 1
-    path: Assets/Scenes/Preview.unity
+    path: Assets/Gallery/Scenes/Preview.unity
     guid: 7ddd3d1b9d6c74fa9bfac96542419ca2
   m_configObjects: {}
